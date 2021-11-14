@@ -27,7 +27,7 @@ for contact in contacts_list[1:]:
 # Задача 3
 dict = {}
 # Добавляем данные в словарь, где ключ фамилия+имя
-for contact in contacts_list:
+for contact in contacts_list[1:]:
     name_dict = str(contact[0:2])
     if name_dict in dict.keys():
         for i in contact[2:7]:
@@ -42,14 +42,31 @@ for contact in contacts_list:
         dict[key] = list2
 
 # Структурируем values
-dict["['Мартиняхин', 'Виталий']"][2] = dict["['Мартиняхин', 'Виталий']"][4]
-del dict["['Мартиняхин', 'Виталий']"][4]
-for key, item in dict.items():
-    if len(item) < 5:
-        dict[key].append("")
+for key in dict.keys():
+    list_new = ["", "", "", "", ""]
+    for el in dict[key]:
+        pattern = re.compile(r"[А-Я]{1}[а-я]+ич|вна")
+        res = pattern.findall(el)
+        if len(res) > 0:
+            list_new[0] = el
+        pattern = re.compile(r"\s+[а-я]+\s")
+        res = pattern.findall(el)
+        if len(res) > 0:
+            list_new[2] = el
+        else:
+            pattern = re.compile(r"[А-Я]{1,}")
+            res = pattern.findall(el)
+            if len(res) > 0:
+                list_new[1] = el
+            if r"+" in el:
+                list_new[3] = el
+            elif r"@" in el:
+                list_new[4] = el
+    dict[key] = list_new
 
 # Добавляем полученный результат в список
 result = []
+result.append(contacts_list[0])
 for key, item in dict.items():
     k1 = key.strip("[")
     k2 = k1.strip("]")
